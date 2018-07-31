@@ -1,0 +1,8 @@
+steps:
+- name: 'ubuntu' 
+  entrypoint: 'bash'
+  env: ['MYENV=foo']
+  args: ['-c', 'echo "my user: ${_MYSUB}"; env',  ]
+substitutions:
+  _MYSUB: "${MYENV}"
+
