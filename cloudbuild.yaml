@@ -1,8 +1,3 @@
 steps:
-- name: 'ubuntu' 
-  entrypoint: 'bash'
-  env: ['MYENV=foo']
-  args: ['-c', 'echo "my user: ${_MYSUB}"; env',  ]
-substitutions:
-  _MYSUB: "${MYENV}"
-
+- name: 'gcr.io/cloud-builders/go' 
+  args: ['get', '-t', 'https://source.developers.google.com/p/wlynch-test/r/test']
