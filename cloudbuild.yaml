@@ -1,3 +1,3 @@
 steps:
-- name: 'gcr.io/cloud-builders/go' 
-  args: ['get', '-t', 'https://source.developers.google.com/p/wlynch-test/r/test']
+- name: 'ubuntu'
+  args: ['echo', 'HELLO WORLD!']
