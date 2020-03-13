@@ -67,7 +67,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["pods", "pods/log", "namespaces", "secrets", "events", "serviceaccounts",
-    "configmaps", "persistentvolumeclaims", "limitranges"]
+    "configmaps", "persistentvolumeclaims"]
   verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
 - apiGroups: ["apps"]
   resources: ["deployments"]
@@ -76,7 +76,7 @@ rules:
   resources: ["deployments/finalizers"]
   verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
 - apiGroups: ["admissionregistration.k8s.io"]
-  resources: ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"]
+  resources: ["mutatingwebhookconfigurations"]
   verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
 - apiGroups: ["tekton.dev"]
   resources: ["tasks", "clustertasks", "taskruns", "pipelines", "pipelineruns", "pipelineresources",
@@ -161,13 +161,6 @@ metadata:
   name: clustertasks.tekton.dev
 spec:
   group: tekton.dev
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
   names:
     kind: ClusterTask
     plural: clustertasks
@@ -270,13 +263,6 @@ metadata:
   name: pipelines.tekton.dev
 spec:
   group: tekton.dev
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
   names:
     kind: Pipeline
     plural: pipelines
@@ -310,13 +296,6 @@ metadata:
   name: pipelineruns.tekton.dev
 spec:
   group: tekton.dev
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
   names:
     kind: PipelineRun
     plural: pipelineruns
@@ -399,13 +378,6 @@ metadata:
   name: tasks.tekton.dev
 spec:
   group: tekton.dev
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
   names:
     kind: Task
     plural: tasks
@@ -439,13 +411,6 @@ metadata:
   name: taskruns.tekton.dev
 spec:
   group: tekton.dev
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-  - name: v1beta1
-    served: true
-    storage: false
   names:
     kind: TaskRun
     plural: taskruns
@@ -476,7 +441,7 @@ spec:
   version: v1alpha1
 
 ---
-# Copyright 2020 The Tekton Authors
+# Copyright 2019 Tekton Authors LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -491,15 +456,23 @@ spec:
 # limitations under the License.
 
 apiVersion: v1
-kind: Secret
+kind: Service
 metadata:
-  name: webhook-certs
+  labels:
+    app: tekton-pipelines-controller
+  name: tekton-pipelines-controller
   namespace: tekton-pipelines
-  labels:
-    pipeline.tekton.dev/release: devel
-# The data is populated at install time.
+spec:
+  ports:
+  - name: http-metrics
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app: tekton-pipelines-controller
 
-# Copyright 2020 The Tekton Authors
+---
+# Copyright 2019 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -512,89 +485,21 @@ metadata:
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
----
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: ValidatingWebhookConfiguration
-metadata:
-  name: validation.webhook.pipeline.tekton.dev
-  labels:
-    pipeline.tekton.dev/release: devel
-webhooks:
-- admissionReviewVersions:
-  - v1beta1
-  clientConfig:
-    service:
-      name: tekton-pipelines-webhook
-      namespace: tekton-pipelines
-  failurePolicy: Fail
-  sideEffects: None
-  name: validation.webhook.pipeline.tekton.dev
 
-# Copyright 2020 The Tekton Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
----
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: MutatingWebhookConfiguration
+apiVersion: v1
+kind: Service
 metadata:
-  name: webhook.pipeline.tekton.dev
   labels:
-    pipeline.tekton.dev/release: devel
-webhooks:
-- admissionReviewVersions:
-  - v1beta1
-  clientConfig:
-    service:
-      name: tekton-pipelines-webhook
-      namespace: tekton-pipelines
-  failurePolicy: Fail
-  sideEffects: None
-  name: webhook.pipeline.tekton.dev
-
-# Copyright 2020 The Tekton Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
----
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: ValidatingWebhookConfiguration
-metadata:
-  name: config.webhook.pipeline.tekton.dev
-  labels:
-    pipeline.tekton.dev/release: devel
-webhooks:
-- admissionReviewVersions:
-  - v1beta1
-  clientConfig:
-    service:
-      name: tekton-pipelines-webhook
-      namespace: tekton-pipelines
-  failurePolicy: Fail
-  sideEffects: None
-  name: config.webhook.pipeline.tekton.dev
-  namespaceSelector:
-    matchExpressions:
-    - key: pipeline.tekton.dev/release
-      operator: Exists
+    app: tekton-pipelines-webhook
+  name: tekton-pipelines-webhook
+  namespace: tekton-pipelines
+spec:
+  ports:
+  - name: https-webhook
+    port: 443
+    targetPort: 8443
+  selector:
+    app: tekton-pipelines-webhook
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -759,48 +664,6 @@ data:
     # default-pod-template:
 
 ---
-# Copyright 2019 The Tekton Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: feature-flags
-  namespace: tekton-pipelines
-data:
-  # Setting this flag to "true" will prevent Tekton overriding your
-  # Task container's $HOME environment variable.
-  #
-  # The default behaviour currently is for Tekton to override the
-  # $HOME environment variable but this will change in an upcoming
-  # release.
-  #
-  # See https://github.com/tektoncd/pipeline/issues/2013 for more
-  # info.
-  disable-home-env-overwrite: "false"
-  # Setting this flag to "true" will prevent Tekton overriding your
-  # Task container's working directory.
-  #
-  # The default behaviour currently is for Tekton to override the
-  # working directory if not set by the user but this will change
-  # in an upcoming release.
-  #
-  # See https://github.com/tektoncd/pipeline/issues/1836 for more
-  # info.
-  disable-working-directory-overwrite: "false"
-
----
 # Copyright 2019 Tekton Authors LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -928,8 +791,7 @@ metadata:
   labels:
     app.kubernetes.io/name: tekton-pipelines
     app.kubernetes.io/component: controller
-    pipeline.tekton.dev/release: "v0.11.0-rc2"
-    version: "v0.11.0-rc2"
+    tekton.dev/release: "v0.10.1"
 spec:
   replicas: 1
   selector:
@@ -939,26 +801,25 @@ spec:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        # tekton.dev/release value replaced with inputs.params.versionTag in pipeline/tekton/publish.yaml
+        tekton.dev/release: "v0.10.1"
       labels:
         app: tekton-pipelines-controller
         app.kubernetes.io/name: tekton-pipelines
         app.kubernetes.io/component: controller
-        # tekton.dev/release value replaced with inputs.params.versionTag in pipeline/tekton/publish.yaml
-        pipeline.tekton.dev/release: "v0.11.0-rc2"
-        version: "v0.11.0-rc2"
     spec:
       serviceAccountName: tekton-pipelines-controller
       containers:
       - name: tekton-pipelines-controller
-        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.11.0-rc2@sha256:97c8424c6091ab3ffe5a56c4c564e0342279f8c16f3b51ddc66bf3f22e457a78
-        args: ["-kubeconfig-writer-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.11.0-rc2@sha256:54250b7767a6e105e04973cceb281173d001a6b7b91cef376c258e2ce29e3390",
-          "-creds-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/creds-init:v0.11.0-rc2@sha256:af3db1677ca1bfd3b3927b98b7cd11fd0226c7f8646d805a868148bf266d4d01",
-          "-git-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.11.0-rc2@sha256:599f634b71a5bd6cd5f83e0ec8f9ce56825640ff20f38a184a3c962df3024c6c",
+        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.10.1@sha256:f4409692f43c4781d949847e661109c69c1a9acb8453cd1219b8341d642cb756
+        args: ["-kubeconfig-writer-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.10.1@sha256:206c4e5de37d13c34f9538f87096db16433aadba264f24e9995cbb6b66fb67de",
+          "-creds-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/creds-init:v0.10.1@sha256:959b0d9a2d43d35e15a85460cc86567d308f467ee8ec16dbd9b32f51ce75d582",
+          "-git-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.10.1@sha256:18ffa2bfc14b1fa6d39f62271beacf6bbc38e7cd2e255184dec477c2936270bc",
           "-nop-image", "tianon/true", "-shell-image", "busybox", "-gsutil-image",
-          "google/cloud-sdk", "-entrypoint-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.11.0-rc2@sha256:58bde03269c74f62d8e03ac10b5d4c42c3db7de741eb10521464622dee4625c3",
-          "-imagedigest-exporter-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.11.0-rc2@sha256:34bff0da2d1f2e0e37ee0cb6a18cf8e2b68e1d4904506c56acdccabf3f24291d",
-          "-pr-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.11.0-rc2@sha256:1fd24693b3c5fe86d90f55f07c14698018a8e6ab76223f717897871719936915",
-          "-build-gcs-fetcher-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/vendor/github.com/googlecloudplatform/cloud-builders/gcs-fetcher/cmd/gcs-fetcher:v0.11.0-rc2@sha256:6ab179ffdcafb66a7c37e862dbc2f1ac60ee5e81ec6bf63f55733369c96d8412"]
+          "google/cloud-sdk", "-entrypoint-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.10.1@sha256:cf0e81477c45dca0df6253e3239f6f0603700641292bf207503a7b267dc4c916",
+          "-imagedigest-exporter-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.10.1@sha256:1cf3f27f3ff7c73782d8a65853e8fc7f0d4aafc6443893e0150bdbe614a9169d",
+          "-pr-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.10.1@sha256:3783254c379b286dd0987674160d3e19a95be1ccf0985788d6dcc0f159199095",
+          "-build-gcs-fetcher-image", "gcr.io/tekton-releases/github.com/tektoncd/pipeline/vendor/github.com/googlecloudplatform/cloud-builders/gcs-fetcher/cmd/gcs-fetcher:v0.10.1@sha256:70f8d32a572496169d451130541541cbc99434932fd28beea486189af8a2995a"]
         volumeMounts:
         - name: config-logging
           mountPath: /etc/config-logging
@@ -981,24 +842,6 @@ spec:
       - name: config-logging
         configMap:
           name: config-logging
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: tekton-pipelines-controller
-    pipeline.tekton.dev/release: "v0.11.0-rc2"
-    version: "v0.11.0-rc2"
-  name: tekton-pipelines-controller
-  namespace: tekton-pipelines
-spec:
-  ports:
-  - name: http-metrics
-    port: 9090
-    protocol: TCP
-    targetPort: 9090
-  selector:
-    app: tekton-pipelines-controller
 
 ---
 # Copyright 2019 The Tekton Authors
@@ -1026,79 +869,41 @@ metadata:
   labels:
     app.kubernetes.io/name: tekton-pipelines
     app.kubernetes.io/component: webhook-controller
-    pipeline.tekton.dev/release: "v0.11.0-rc2"
-    version: "v0.11.0-rc2"
+    tekton.dev/release: "v0.10.1"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: tekton-pipelines-webhook
-      role: webhook
   template:
     metadata:
       annotations:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        tekton.dev/release: "v0.10.1"
       labels:
         app: tekton-pipelines-webhook
-        role: webhook
         app.kubernetes.io/name: tekton-pipelines
         app.kubernetes.io/component: webhook-controller
-        pipeline.tekton.dev/release: "v0.11.0-rc2"
-        version: "v0.11.0-rc2"
     spec:
       serviceAccountName: tekton-pipelines-controller
       containers:
       - name: webhook
         # This is the Go import path for the binary that is containerized
         # and substituted here.
-        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.11.0-rc2@sha256:7e9486f866958a505e6a7d4f9ab6587c6788a5c93b328d36de4e046c36fd6306
+        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.10.1@sha256:e0a277b69a742ff0e49767d11f9a1325fcea7fb8bbbf2572af9d49116cbb2385
+        volumeMounts:
+        - name: config-logging
+          mountPath: /etc/config-logging
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: CONFIG_LOGGING_NAME
-          value: config-logging
-        - name: CONFIG_OBSERVABILITY_NAME
-          value: config-observability
         - name: WEBHOOK_SERVICE_NAME
           value: tekton-pipelines-webhook
-        - name: METRICS_DOMAIN
-          value: tekton.dev/pipeline
-        securityContext:
-          allowPrivilegeEscalation: false
-        ports:
-        - name: metrics
-          containerPort: 9090
-        - name: profiling
-          containerPort: 8008
-        - name: https-webhook
-          containerPort: 8443
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: tekton-pipelines-webhook
-    role: webhook
-    pipeline.tekton.dev/release: v0.11.0-rc2
-    version: "v0.11.0-rc2"
-  name: tekton-pipelines-webhook
-  namespace: tekton-pipelines
-spec:
-  ports:
-  - # Define metrics and profiling for them to be accessible within service meshes.
-    name: http-metrics
-    port: 9090
-    targetPort: 9090
-  - name: http-profiling
-    port: 8008
-    targetPort: 8008
-  - name: https-webhook
-    port: 443
-    targetPort: 8443
-  selector:
-    app: tekton-pipelines-webhook
-    role: webhook
+      volumes:
+      - name: config-logging
+        configMap:
+          name: config-logging
 
 ---
