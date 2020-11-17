@@ -1,12 +1,13 @@
 apiVersion: tekton.dev/v1beta1
-kind: Pipeline
+kind: PipelineRun
 metadata:
-  name: hello
+  name: hello-
 spec:
-  tasks:
-    - name: hello
-      taskSpec:
-          steps:
-            - name: hello
-              image: ubuntu
-              script: "echo hello world!"
+  pipelineSpec:
+    tasks:
+      - name: hello
+        taskSpec:
+            steps:
+              - name: hello
+                image: ubuntu
+                script: "echo hello world!"
