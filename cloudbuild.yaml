@@ -1,4 +1,6 @@
+id: asdf
 steps:
 - name: 'ubuntu' 
-  args: ['echo', '${PROJECT_ID:0:2}']
-timeout: 6h
+  args: ['echo', '${PROJECT_ID}']
+- name: 'ubuntu' 
+  args: ['ls', '-al', '.git']
