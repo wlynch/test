@@ -6,4 +6,4 @@ jobs:
     steps:
       - run: echo  ${MY_ENV_VAR}
     env:
-      MY_ENV_VAR: ${{ startsWith(github.event_name, 'pull_request') refs/pull/github.event.number/merge }} || github.ref }}
+      MY_ENV_VAR: ${{ startsWith(github.event_name, 'pull_request') refs/pull/${{ github.event.number }}/merge }} || github.ref }}
