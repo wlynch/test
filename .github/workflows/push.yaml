@@ -1,0 +1,7 @@
+name: GitHub Actions Demo
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo '${{ startsWith(github.event_name, "pull_request") "refs/pull/github.event.number/merge" }} || github.ref }}'
