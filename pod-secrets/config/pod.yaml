@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: launcher
+spec:
+  containers:
+  - name: mycontainer
+    image: ko://github.com/wlynch/test/pod-secrets
