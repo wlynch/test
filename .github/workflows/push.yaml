@@ -4,7 +4,7 @@ jobs:
  commit:
    runs-on: ubuntu-latest
    steps:
-     - uses: actions/checkout@a47cfb0417aa3614869806bd09de3bd0be54f812
+     - uses: actions/checkout@c7d749a2d57b4b375d1ebcd17cfbfb60c676f18e
      - shell: bash
        run: |
          echo 'hello world!'
