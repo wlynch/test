@@ -2,16 +2,10 @@ name: Signed Commit
 on: [push]
 jobs:
  commit:
-   permissions:
-     id-token: write # Enable OIDC
    runs-on: ubuntu-latest
    steps:
-     - uses: actions/checkout@v3
-     - uses: chainguard-dev/actions/setup-gitsign@main
+     - uses: actions/checkout@1667c9c0773b71fccfd6f49da8e3e2fd8c73ac70
      - shell: bash
        run: |
-         date > date.txt
-         git config --global user.email "you@example.com"
-         git config --global user.name "Your Name"
-         git commit -am "asdf"
-         git log -1
+         echo 'hello world!'
+
