@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  annotations:
+    cosign.sigstore.dev/message: H4sIAAAAAAAA/wA/AcD+H4sIAAAAAAAA/+yRzW6rMBCFWfMUvtlzPYAhFx7iqmqrbqsJTMCJMa5tEiVPXyWQRlWVLlNV4tscz885kjV8h5ave1WTdfxfyjfLyjo4brKmeNWbdL8q2jdVtC0AQKP5M6/6zlhyTuom8mij5hiLYhkXIk+Be9r6Xv89YKeCKydvLsRZl3l2VkjG+oRIkiAWKYhMQJJBACnkEAcMgjswOI82ANirg67a23vO43r9Tc70lw/9JaCRL2Sd7HXJpuvVtOO7eEUe43ArdV2yB2lISU2Pgw478lijxzJkrCFNFj39x45K1pJSfRQ6Q9VpaCbT01Qz5tFt3fhkLGL66pp648rVcMF5Mu5z61bABdlhQyUbVoP2w5epq6w0vmQLqtp+TGD73qr6zyL86YvMzMzM3If3AAAA///qgGtEAAgAAAEAAP//If26BD8BAAA=
+    cosign.sigstore.dev/signature: MEUCIQD67kuTW5Pf2A0T6Jg/eOxzJXTlzKVPHUDn7GSv1b0ZvgIgAYNl/gumXPau8dnSvQYRNgESZPsiPIq0s/BReSGppiE=
+  generateName: hello-
+spec:
+  pipelineSpec:
+    tasks:
+    - name: hello
+      taskSpec:
+        steps:
+        - image: ubuntu
+          name: hello
+          script: echo hello world!1!!!

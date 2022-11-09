@@ -4,7 +4,7 @@ jobs:
  commit:
    runs-on: ubuntu-latest
    steps:
-     - uses: actions/checkout@main
+     - uses: actions/checkout@c7d749a2d57b4b375d1ebcd17cfbfb60c676f18e
        with:
          repository: 
      - shell: bash

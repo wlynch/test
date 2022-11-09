@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: git-clone-demo-tr
+spec:
+  taskRef:
+    resolver: git
+    params:
+    - name: url
+      value: https://github.com/tektoncd/catalog.git
+    - name: revision
+      value: 
+    - name: pathInRepo
+      value: task/git-clone/0.6/git-clone.yaml
+  params:
+    - name: url
+      value: https://github.com/wlynch/test.git
+  workspaces:
+    - name: output
+      emptyDir: {}
