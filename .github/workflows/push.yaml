@@ -1,5 +1,7 @@
 name: Signed Commit
 on: [push, workflow_dispatch]
+defaults:
+  timeout-minutes: 1
 jobs:
  commit:
    runs-on: ubuntu-latest
