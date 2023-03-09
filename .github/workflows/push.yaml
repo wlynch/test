@@ -1,15 +1,22 @@
 name: Signed Commit
 on: [push, workflow_dispatch]
-defaults:
-  timeout-minutes: 1
+
 jobs:
- commit:
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@c7d749a2d57b4b375d1ebcd17cfbfb60c676f18e
-       with:
-         repository: 
-     - shell: bash
-       run: |
-         echo 'hello world!'
+  commit:
+    permissions:
+      contents: write
+      pull-requests: write
+  runs-on: ubuntu-latest
+  steps:
+  - uses: actions/checkout@v3
+
+  # Make changes to pull request here
+
+  - run: |
+      date > date.txt
+
+  - name: Create Pull Request
+    uses: peter-evans/create-pull-request@v4
+    with:
+      author: Dan Lorenc <lorenc.d@gmail.com>
 
