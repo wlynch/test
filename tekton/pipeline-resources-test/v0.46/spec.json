@@ -1,0 +1,14 @@
+{
+  "serviceAccountName": "default",
+  "taskSpec": {
+    "steps": [
+      {
+        "name": "",
+        "image": "busybox",
+        "resources": {},
+        "script": "echo hi!"
+      }
+    ]
+  },
+  "timeout": "1h0m0s"
+}

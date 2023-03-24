@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: test
+spec:
+  resources:
+    outputs:
+    - name: image
+      resourceSpec:
+        params:
+        - name: url
+          value: gcr.io/foo/bar
+        type: image
+  serviceAccountName: ""
+  taskSpec:
+    resources:
+      outputs:
+      - name: image
+        type: image
+    steps:
+    - image: busybox
+      script: "echo hi!"

@@ -1,0 +1,38 @@
+{
+  "resources": {
+    "outputs": [
+      {
+        "name": "image",
+        "resourceSpec": {
+          "type": "image",
+          "params": [
+            {
+              "name": "url",
+              "value": "gcr.io/foo/bar"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "serviceAccountName": "default",
+  "taskSpec": {
+    "resources": {
+      "outputs": [
+        {
+          "name": "image",
+          "type": "image"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "name": "",
+        "image": "busybox",
+        "resources": {},
+        "script": "echo hi!"
+      }
+    ]
+  },
+  "timeout": "1h0m0s"
+}
