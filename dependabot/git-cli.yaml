@@ -93,7 +93,7 @@ spec:
 
   steps:
     - name: git
-      image: cgr.dev/chainguard/git:root-2.39@sha256:7759f87050dd8bacabe61354d75ccd7f864d6b6f8ec42697db7159eccd491139
+      image: cgr.dev/chainguard/git:root-2.39@sha256:e6a07d35409839afeee3a98a76f544df63caa48d9311a1012718405b170d7e4c
       workingDir: $(workspaces.source.path)
       env:
       - name: HOME
