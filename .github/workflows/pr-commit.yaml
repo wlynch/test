@@ -1,0 +1,18 @@
+name: Create production promotion pull request
+on:
+  push:
+    branches:
+      - main
+jobs:
+  pr:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: test
+        shell: bash
+        run: |
+          date > date.txt
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
