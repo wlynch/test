@@ -15,7 +15,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api https://api.github.com/repos/wlynch/test/contents/date.txt \
+          gh api "https://api.github.com/repos/wlynch/test/contents/date.txt-`date +%s`" \
             -X "PUT" \
             -F "content=`date | base64`" \
             -F "message=`date`" \
