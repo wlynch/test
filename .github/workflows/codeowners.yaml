@@ -1,0 +1,24 @@
+name: Update CODEOWNERS
+on:
+  push: 
+    branches: ["main", "master"]
+  pull_request:
+    paths:
+      - "**/CODEOWNERS" # Trigger for every CODEOWNERS file in the repo
+      - "!.github/CODEOWNERS" # except for the generated file itself
+jobs:
+  check-codeowners:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Update CODEOWNERS file
+        uses: wlynch/codeowners@main
+      # Check that there's no diff
+      - uses: chainguard-dev/actions/nodiff@main
+        with:
+          fixup-command: "codeowners"
+      - run: |
+          git status
+          git diff
+          cat .github/CODEOWNERS
