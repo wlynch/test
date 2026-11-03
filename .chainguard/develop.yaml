@@ -6,6 +6,7 @@ environment:
     - git
     - curl
     - bash
+    - claude
 
 network:
   egress:
