@@ -8,4 +8,8 @@ environment:
     - bash
 
 network:
-  egress: [proxy.golang.org, sum.golang.org]
+  egress:
+    - proxy.golang.org
+    - sum.golang.org
+    # The module proxy redirects zip downloads here.
+    - storage.googleapis.com
