@@ -6,3 +6,6 @@ environment:
     - git
     - curl
     - bash
+
+network:
+  egress: [proxy.golang.org, sum.golang.org]
